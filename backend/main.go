@@ -19,8 +19,9 @@ var db *gorm.DB
 func InitDB() {
 	username := "root"
 	passwd := "w86#qNwV"
+	databaseName := "go_test"
 
-	dsn := fmt.Sprintf("%s:%s@tcp(127.0.0.1:3306)/go_test?charset=utf8mb4&parseTime=True&loc=Local", username, passwd)
+	dsn := fmt.Sprintf("%s:%s@tcp(127.0.0.1:3306)/%s?charset=utf8mb4&parseTime=True&loc=Local", username, passwd, databaseName)
 	var err error
 
 	// 初始化数据库连接
@@ -30,6 +31,7 @@ func InitDB() {
 		log.Fatal("Failed to connect to database:", err)
 	}
 
+	// 自动迁移
 	db.AutoMigrate(&User{})
 }
 

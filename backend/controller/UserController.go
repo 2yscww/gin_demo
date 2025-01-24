@@ -133,8 +133,17 @@ func Login(c *gin.Context) {
 	}
 
 	// 返回结果
-	// c.JSON(200, gin.H{
-	// 	"code": "200",
-	// 	"data": gin.H{"token": token},
-	// 	"msg":  "登录成功"})
+	c.JSON(200, gin.H{
+		"code": "200",
+		"data": gin.H{"token": token},
+		"msg":  "登录成功"})
+}
+
+func Info(c *gin.Context) {
+	user, _ := c.Get("user")
+
+	c.JSON(200, gin.H{
+		"code": "200",
+		"data": gin.H{"user": user}})
+
 }

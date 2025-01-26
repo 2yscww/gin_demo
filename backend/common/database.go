@@ -6,6 +6,7 @@ import (
 
 	"gin_demo/model"
 
+	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -15,11 +16,14 @@ var db *gorm.DB
 
 // 连接mysql数据库
 func InitDB() {
-	username := "root"
-	passwd := "w86#qNwV"
-	databaseName := "go_test"
+	username := viper.GetString("datasource.username")
+	passwd := viper.GetString("datasource.password")
+	databaseName := viper.GetString("datasource.database")
+	host := viper.GetString("datasource.host")
+	port := viper.GetString("datasource.port")
+	charset := viper.GetString("datasource.charset")
 
-	dsn := fmt.Sprintf("%s:%s@tcp(127.0.0.1:3306)/%s?charset=utf8mb4&parseTime=True&loc=Local", username, passwd, databaseName)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=True&loc=Local", username, passwd, host, port, databaseName, charset)
 	var err error
 
 	// 初始化数据库连接

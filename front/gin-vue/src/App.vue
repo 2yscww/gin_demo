@@ -1,4 +1,7 @@
 <template>
+  <div id="app">
+    <router-view></router-view>  <!-- 渲染路由匹配的组件 -->
+  </div>
   <img alt="Vue logo" src="./assets/logo.png">
   <HelloWorld msg="Welcome to Your Vue.js App"/>
 </template>

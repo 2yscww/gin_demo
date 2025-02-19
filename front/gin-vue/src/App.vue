@@ -1,20 +1,24 @@
 <template>
   <div id="app">
-    <router-view></router-view>  <!-- 渲染路由匹配的组件 -->
+    <b-cont>
+      <NavBar></NavBar>
+    </b-cont>
+    <!-- 渲染路由匹配的组件 -->
+     
+    <b-container>
+      <router-view msg="Welcome to Your Vue.js App"></router-view>
+    </b-container> 
   </div>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+
+  <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
+  <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
 </template>
 
-<script>
-import HelloWorld from './components/HelloWorld.vue'
+<script setup>
+// import HelloWorld from './components/HelloWorld.vue'
+import NavBar from './components/NavBar.vue';
 
-export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+
 </script>
 
 <style>
@@ -24,6 +28,6 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  /* margin-top: 60px; */
 }
 </style>

@@ -24,7 +24,7 @@
                             <input type="checkbox" class="form-check-input" id="exampleCheck1">
 
                         </div>
-                        <button type="submit" class="btn btn-primary" @click="loguser">注册</button>
+                        <button type="submit" class="btn btn-primary">注册</button>
                     </form>
                 </b-card>
             </b-col>
@@ -37,12 +37,12 @@
 <script setup>
 import { reactive } from 'vue';
 import { ref } from 'vue';
+import{registerInt} from '@/utils/axios';
+
 
 const telephoneNumRed = ref(false);
 
-
 const passwdRed = ref(false);
-
 
 const user = reactive({
     username: "",
@@ -50,6 +50,7 @@ const user = reactive({
     password: ""
 });
 
+// 检查电话号码是否符合前端要求
 const telephoneCheckFunc = () => {
     if (user.telephone.length !== 11) {
         telephoneNumRed.value = true;
@@ -58,6 +59,7 @@ const telephoneCheckFunc = () => {
     }
 }
 
+// 检查密码是否符合前端要求
 const passwdCheckFunc = () => {
     if (user.password.length < 8) {
         passwdRed.value = true;
@@ -66,34 +68,45 @@ const passwdCheckFunc = () => {
     }
 }
 
-const loguser = () => {
-    console.log(user)
-};
 
-const register = () => {
+const register = async () => {
     // 先执行检查
     telephoneCheckFunc();
     passwdCheckFunc();
 
-    //注册失败的逻辑
-    if (telephoneNumRed.value == true || passwdRed.value == true){
-        console.log("不通过!");
+    //电话号码或密码前端要求不符合
+    if (telephoneNumRed.value == true || passwdRed.value == true) {
+        console.log("电话或者密码不符合要求");
         return;
     }
 
-    // if (user.telephone.length !== 11) {
-    //     telephoneNumRed.value = true;
-    //     return;
-    // } else {
-    //     telephoneNumRed.value = false;
-    // }
+    // 验证数据
+    try{
+        // 发送数据到后端
+        const response = await registerInt(user);
 
-    // if (user.password.length < 8) {
-    //     passwdRed.value = true;
-            // return;
-    // } else {
-    //     passwdRed.value = false;
-    // }
+        if (response.data && response.data.token) {
+            
+            // 保存token
+            // 假设后端返回了 token，保存它到 localStorage 或 vuex
+            localStorage.setItem("token", response.data.token);
+
+            console.log("注册成功:", response.data);
+
+            // 跳转主页
+
+
+        } else {
+            console.log("注册失败：", response.data.message);
+        }
+
+
+    } catch(error) {
+        console.error("请求错误：", error);
+    }
+    
+
+    
 }
 
 

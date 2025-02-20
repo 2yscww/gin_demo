@@ -40,11 +40,23 @@ func main() {
 
 	r = router.CollectRtoutes(r)
 
+	// 读取端口配置
 	port := viper.GetString("server.port")
 
 	if port != "" {
 		panic(r.Run(":" + port))
 	}
+
+	// * 不启用HTTPS
+	// 启用HTTPS
+	// certFile := "./verify/cert.pem"
+	// keyFile := "./verify/key.pem"
+
+	// err := r.RunTLS(":"+port, certFile, keyFile)
+	// if err != nil {
+	// 	log.Fatal("Failed to start HTTPS server:", err)
+	// }
+	// * 不启用HTTPS
 
 	panic(r.Run())
 

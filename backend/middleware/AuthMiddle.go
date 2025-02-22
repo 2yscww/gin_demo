@@ -22,8 +22,6 @@ func AuthMiddleware() gin.HandlerFunc {
 		// TODO 完善中间件直接返回敏感信息的问题
 		// ! 不能将token的敏感信息直接返回
 
-		//TODO 完善中间件没有CORS配置的问题
-
 		tokenString = tokenString[7:]
 
 		token, claims, err := common.ParseToken(tokenString)

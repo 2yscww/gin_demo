@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -27,12 +28,26 @@ func isTelephoneExist(db *gorm.DB, telephone string) bool {
 
 func Register(c *gin.Context) {
 	// c.String(http.StatusOK, "hello World!")
+
+	var requestUser = model.User{}
+
+	c.Bind(&requestUser)
+
 	//获取参数
+	// name := c.PostForm("username")
+	// telephone := c.PostForm("telephone")
+	// password := c.PostForm("password")
 
-	name := c.PostForm("name")
-	telephone := c.PostForm("telephone")
-	password := c.PostForm("password")
+	name := requestUser.Username
+	telephone := requestUser.Telephone
+	password := requestUser.Password
 
+	fmt.Println("用户名为:", name)
+	fmt.Println("电话号码为:", telephone)
+	fmt.Println("密码为:", password)
+
+	// ! 后端无法正常获取到数据
+	// TODO  修复后端无法正常获取到数据的问题
 	// 引入数据库实例
 	db := common.GetDB()
 

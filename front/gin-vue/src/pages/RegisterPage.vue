@@ -13,6 +13,7 @@
                             <input type="tel" class="form-control" v-model="user.telephone" id="exampleInputTelephone1"
                                 placeholder="输入您的电话号码">
                             <b-form-text class="text-danger" v-if="telephoneNumRed">手机号必须为11位</b-form-text>
+                            <b-form-text class="text-danger" v-if="telephoneHasExistRed">{{ telephoneErrorMsg }}</b-form-text>
                         </div>
                         <div class="mb-3">
                             <label for="exampleInputPassword1" class="form-label">密码</label>
@@ -37,12 +38,16 @@
 <script setup>
 import { reactive } from 'vue';
 import { ref } from 'vue';
-import{registerInt} from '@/utils/axios';
+import { registerInt } from '@/utils/axios';
 
 
 const telephoneNumRed = ref(false);
 
 const passwdRed = ref(false);
+
+const telephoneHasExistRed = ref(false)
+
+const telephoneErrorMsg = ref(""); // 存储后端返回的错误信息
 
 const user = reactive({
     username: "",
@@ -68,6 +73,17 @@ const passwdCheckFunc = () => {
     }
 }
 
+//  代码还原
+
+const telephoneHasExistFunc = (mesg) => {
+    if (mesg === "该手机号已注册用户") {
+        telephoneHasExistRed.value = true
+        telephoneErrorMsg.value = mesg
+    } else {
+        telephoneHasExistRed.value = false
+        telephoneErrorMsg.value = ""
+    }
+}
 
 const register = async () => {
     // 先执行检查
@@ -81,15 +97,15 @@ const register = async () => {
     }
 
     // 验证数据
-    try{
+    try {
         // 发送数据到后端
         const response = await registerInt(user);
 
-        if (response.data && response.data.token) {
-            
+        if (response.data && response.data.code === 200) {
+
             // 保存token
             // 假设后端返回了 token，保存它到 localStorage 或 vuex
-            localStorage.setItem("token", response.data.token);
+            localStorage.setItem("token", response.data.data.token);
 
             console.log("注册成功:", response.data);
 
@@ -101,12 +117,23 @@ const register = async () => {
         }
 
 
-    } catch(error) {
-        console.error("请求错误：", error);
-    }
-    
+    } catch (error) {
+        // console.error("请求错误：", error);
+        if (error.response) {
+            const { msg } = error.response.data;
 
-    
+            // TODO 此处console.log输出后续要删掉
+            console.log(error.response)
+            telephoneHasExistFunc(msg);
+
+            // if (msg === "该手机号已注册用户") {
+            //     alert("该手机号已注册用户")
+            // }
+        }
+    }
+
+
+
 }
 
 

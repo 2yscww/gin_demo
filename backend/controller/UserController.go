@@ -47,7 +47,7 @@ func Register(c *gin.Context) {
 	fmt.Println("密码为:", password)
 
 	// ! 后端无法正常获取到数据
-	// TODO  修复后端无法正常获取到数据的问题
+
 	// 引入数据库实例
 	db := common.GetDB()
 
@@ -76,6 +76,7 @@ func Register(c *gin.Context) {
 
 	if isTelephoneExist(db, telephone) {
 		response.Response(c, http.StatusUnprocessableEntity, 422, nil, "该手机号已注册用户")
+		log.Println("触发了--该手机号已注册用户")
 		// c.JSON(http.StatusUnprocessableEntity, gin.H{"code": 422, "msg": "该手机号已注册用户"})
 		return
 	}
@@ -97,6 +98,17 @@ func Register(c *gin.Context) {
 		Password:  string(hashPassword),
 	}
 
+	// 发放token
+
+	token, err := common.ReleaseToken(newUser)
+
+	if err != nil {
+		response.Response(c, http.StatusUnprocessableEntity, 500, nil, "系统异常")
+		// c.JSON(http.StatusUnprocessableEntity, gin.H{"code": 500, "msg": "系统异常"})
+		log.Printf("token generate error: %v", err)
+		return
+	}
+
 	db.Create(&newUser)
 
 	// 返回结果
@@ -104,7 +116,9 @@ func Register(c *gin.Context) {
 	// 	"code": "200",
 	// 	"msg":  "注册成功"})
 
-	response.Success(c, nil, "注册成功")
+	// response.Success(c, nil, "注册成功")
+
+	response.Success(c, gin.H{"token": token}, "注册成功")
 }
 
 func Login(c *gin.Context) {

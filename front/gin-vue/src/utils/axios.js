@@ -1,4 +1,5 @@
-import instance from "@/utils/request"
+import { instance, userService } from "@/utils/request";
+
 
 
 
@@ -15,6 +16,6 @@ export const registerInt = (data) => {
 
 // 获取用户信息
 
-// export const userInfo = () => {
-//     return service.get("/auth/info")
-// }
+export const userInfo = () => {
+    return userService.get("/auth/info")
+}

@@ -19,7 +19,7 @@ const set = (key, data) => {
 
 // 读取
 const get = (key) => {
-    localStorage.getItem(key)
+    return localStorage.getItem(key)
 }
 
 

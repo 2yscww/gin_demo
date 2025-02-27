@@ -3,6 +3,7 @@ package middleware
 import (
 	"gin_demo/common"
 	"gin_demo/model"
+	"log"
 	"net/http"
 	"strings"
 
@@ -27,6 +28,11 @@ func AuthMiddleware() gin.HandlerFunc {
 		token, claims, err := common.ParseToken(tokenString)
 
 		// ? token.Valid 为 true 时表示token有效
+		log.Println("Token claims:", claims) // 调试日志，打印 claims 内容
+
+		//TODO 中间件可能存在问题，无法正确识别user id
+
+		// 2025/02/27 22:40:10 Token claims: &{0 {Administrator user token []
 
 		if err != nil || !token.Valid {
 			c.JSON(http.StatusUnauthorized, gin.H{"code": 401, "msg": "权限不足"})

@@ -39,7 +39,7 @@
 <script setup>
 import { reactive } from 'vue';
 import { ref } from 'vue';
-import { registerInt } from '@/utils/axios';
+import { registerInt, userInfo } from '@/utils/axios';
 import router from '@/router/router';
 import storageService from '@/utils/storageService';
 
@@ -103,7 +103,7 @@ const register = async () => {
     try {
         // 发送数据到后端
         const response = await registerInt(user);
-        
+
 
         if (response.data && response.data.code === 200) {
 
@@ -112,21 +112,25 @@ const register = async () => {
             // 假设后端返回了 token，保存它到 localStorage 或 vuex
             // localStorage.setItem("token", response.data.data.token);
             console.log("注册成功，保存 token:", response.data.data.token);
+
             storageService.set(storageService.USER_TOKEN, response.data.data.token);
+
+            const tokentest = storageService.get(storageService.USER_TOKEN);
+            console.log("Token  storage:", tokentest);
 
             // 保存用户信息
 
-            // TODO 完善用户信息获取
+            // TODO 完善用户信息获取 
 
-            // const infoResponse = await userInfo();
+            const infoResponse = await userInfo();
 
-            // if (infoResponse.data && infoResponse.data.code === 200) {
-            //     console.log("用户信息获取成功");
-            //     storageService.get(storageService.USER_INFO, response.data.data.username);
+            if (infoResponse.data && infoResponse.data.code === 200) {
+                console.log("用户信息获取成功");
+                storageService.get(storageService.USER_INFO, response.data.data.username);
 
-            // } else {
-            //     console.log("获取用户信息失败:", infoResponse.data.message);
-            // }
+            } else {
+                console.log("获取用户信息失败:", infoResponse.data.message);
+            }
 
 
 

@@ -76,7 +76,6 @@ func Register(c *gin.Context) {
 
 	if isTelephoneExist(db, telephone) {
 		response.Response(c, http.StatusUnprocessableEntity, 422, nil, "该手机号已注册用户")
-		log.Println("触发了--该手机号已注册用户")
 		// c.JSON(http.StatusUnprocessableEntity, gin.H{"code": 422, "msg": "该手机号已注册用户"})
 		return
 	}

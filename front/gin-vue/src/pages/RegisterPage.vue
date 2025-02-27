@@ -13,7 +13,8 @@
                             <input type="tel" class="form-control" v-model="user.telephone" id="exampleInputTelephone1"
                                 placeholder="输入您的电话号码">
                             <b-form-text class="text-danger" v-if="telephoneNumRed">手机号必须为11位</b-form-text>
-                            <b-form-text class="text-danger" v-if="telephoneHasExistRed">{{ telephoneErrorMsg }}</b-form-text>
+                            <b-form-text class="text-danger" v-if="telephoneHasExistRed">{{ telephoneErrorMsg
+                                }}</b-form-text>
                         </div>
                         <div class="mb-3">
                             <label for="exampleInputPassword1" class="form-label">密码</label>
@@ -39,7 +40,8 @@
 import { reactive } from 'vue';
 import { ref } from 'vue';
 import { registerInt } from '@/utils/axios';
-
+import router from '@/router/router';
+import storageService from '@/utils/storageService';
 
 const telephoneNumRed = ref(false);
 
@@ -86,6 +88,7 @@ const telephoneHasExistFunc = (mesg) => {
 }
 
 const register = async () => {
+    console.log("点击注册按钮，开始执行注册逻辑");
     // 先执行检查
     telephoneCheckFunc();
     passwdCheckFunc();
@@ -100,16 +103,38 @@ const register = async () => {
     try {
         // 发送数据到后端
         const response = await registerInt(user);
+        
 
         if (response.data && response.data.code === 200) {
 
             // 保存token
+            console.log("开始发送注册请求...");
             // 假设后端返回了 token，保存它到 localStorage 或 vuex
-            localStorage.setItem("token", response.data.data.token);
+            // localStorage.setItem("token", response.data.data.token);
+            console.log("注册成功，保存 token:", response.data.data.token);
+            storageService.set(storageService.USER_TOKEN, response.data.data.token);
+
+            // 保存用户信息
+
+            // TODO 完善用户信息获取
+
+            // const infoResponse = await userInfo();
+
+            // if (infoResponse.data && infoResponse.data.code === 200) {
+            //     console.log("用户信息获取成功");
+            //     storageService.get(storageService.USER_INFO, response.data.data.username);
+
+            // } else {
+            //     console.log("获取用户信息失败:", infoResponse.data.message);
+            // }
+
+
+
 
             console.log("注册成功:", response.data);
 
             // 跳转主页
+            router.push("/")
 
 
         } else {
@@ -135,6 +160,8 @@ const register = async () => {
 
 
 }
+
+
 
 
 </script>

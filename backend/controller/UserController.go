@@ -99,6 +99,10 @@ func Register(c *gin.Context) {
 
 	// 发放token
 
+	// ! 我现在要把发放token和创建用户的逻辑对调
+
+	db.Create(&newUser)
+
 	token, err := common.ReleaseToken(newUser)
 
 	if err != nil {
@@ -107,8 +111,6 @@ func Register(c *gin.Context) {
 		log.Printf("token generate error: %v", err)
 		return
 	}
-
-	db.Create(&newUser)
 
 	// 返回结果
 	// c.JSON(200, gin.H{
@@ -188,8 +190,10 @@ func Info(c *gin.Context) {
 	user, _ := c.Get("user")
 
 	// ? 使用DTO来封装传输 来确保不会有不相关的敏感信息也被返回
-	c.JSON(200, gin.H{
-		"code": "200",
-		"data": gin.H{"user": dto.ToUserDto(user.(model.User))}})
+	// c.JSON(200, gin.H{
+	// 	"code": "200",
+	// 	"data": gin.H{"user": dto.ToUserDto(user.(model.User))}})
+
+	response.Success(c, gin.H{"user": dto.ToUserDto(user.(model.User))}, "")
 
 }

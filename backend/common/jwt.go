@@ -1,10 +1,13 @@
 package common
 
 import (
+	"fmt"
 	"gin_demo/model"
+	"log"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"gorm.io/gorm"
 )
 
 var jwtKey = []byte("a_secret_crect")
@@ -17,10 +20,31 @@ type Claims struct {
 
 func ReleaseToken(user model.User) (string, error) {
 
+	db := GetDB() // 获取数据库连接
+	var dbUser model.User
+	err := db.Where("telephone = ?", user.Telephone).First(&dbUser).Error
+
+	// ? 从数据库中查询电话号码是否有注册，也就是用户是否存在
+
+	// 检查查询是否出错
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			log.Println("未找到用户:", user.Telephone)
+			return "", fmt.Errorf("未找到用户")
+		}
+		log.Println("查询用户时发生错误:", err)
+		return "", err
+	}
+
+	// 打印查询到的 ID
+	log.Println("生成的用户 ID:", dbUser.ID)
+
 	expirationTime := time.Now().Add(7 * 24 * time.Hour)
 
 	claims := &Claims{
-		UserId: user.ID,
+		// TODO 修复user的ID无法正确赋值的问题
+		// UserId: user.ID,
+		UserId: dbUser.ID,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -28,6 +52,8 @@ func ReleaseToken(user model.User) (string, error) {
 			Subject:   "user token",
 		},
 	}
+
+	log.Println("生成的JWT claims:", claims.UserId)
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString(jwtKey)

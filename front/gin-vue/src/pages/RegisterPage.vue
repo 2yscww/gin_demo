@@ -125,8 +125,11 @@ const register = async () => {
             const infoResponse = await userInfo();
 
             if (infoResponse.data && infoResponse.data.code === 200) {
-                console.log("用户信息获取成功");
-                storageService.get(storageService.USER_INFO, response.data.data.username);
+                // console.log("用户信息获取成功");
+
+                // console.log("用户信息:", infoResponse)
+
+                storageService.get(storageService.USER_INFO, response.data.data.user.username);
 
             } else {
                 console.log("获取用户信息失败:", infoResponse.data.message);

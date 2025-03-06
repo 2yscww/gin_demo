@@ -108,31 +108,24 @@ const register = async () => {
         if (response.data && response.data.code === 200) {
 
             // 保存token
-            console.log("开始发送注册请求...");
             // 假设后端返回了 token，保存它到 localStorage 或 vuex
             // localStorage.setItem("token", response.data.data.token);
-            console.log("注册成功，保存 token:", response.data.data.token);
-
-            storageService.set(storageService.USER_TOKEN, response.data.data.token);
+            storageService.set(storageService.USER_TOKEN, JSON.stringify(response.data.data.token));
 
             const tokentest = storageService.get(storageService.USER_TOKEN);
             console.log("Token  storage:", tokentest);
 
             // 保存用户信息
 
-            // TODO 完善用户信息获取 
-
             const infoResponse = await userInfo();
 
             if (infoResponse.data && infoResponse.data.code === 200) {
-                // console.log("用户信息获取成功");
-
-                // console.log("用户信息:", infoResponse)
-
-                storageService.get(storageService.USER_INFO, response.data.data.user.username);
+                // * 将用户名保存
+                storageService.set(storageService.USER_INFO, response.data.data.user.username);
+                console.log(infoResponse.data)
 
             } else {
-                console.log("获取用户信息失败:", infoResponse.data.message);
+                console.log("获取用户信息失败:", infoResponse);
             }
 
 
@@ -154,8 +147,7 @@ const register = async () => {
         if (error.response) {
             const { msg } = error.response.data;
 
-            // TODO 此处console.log输出后续要删掉
-            console.log(error.response)
+
             telephoneHasExistFunc(msg);
 
             // if (msg === "该手机号已注册用户") {

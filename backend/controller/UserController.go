@@ -99,8 +99,6 @@ func Register(c *gin.Context) {
 
 	// 发放token
 
-	// ! 我现在要把发放token和创建用户的逻辑对调
-
 	db.Create(&newUser)
 
 	token, err := common.ReleaseToken(newUser)

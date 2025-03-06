@@ -14,4 +14,4 @@ export const userService = axios.create({
     headers: { Authorization: 'Bearer ' + `${storageService.get(storageService.USER_TOKEN)}` }
 })
 
-//TODO 考虑把所有的请求都从userservice走
+

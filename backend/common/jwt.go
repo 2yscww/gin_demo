@@ -42,7 +42,7 @@ func ReleaseToken(user model.User) (string, error) {
 	expirationTime := time.Now().Add(7 * 24 * time.Hour)
 
 	claims := &Claims{
-		// TODO 修复user的ID无法正确赋值的问题
+
 		// UserId: user.ID,
 		UserId: dbUser.ID,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -52,8 +52,6 @@ func ReleaseToken(user model.User) (string, error) {
 			Subject:   "user token",
 		},
 	}
-
-	log.Println("生成的JWT claims:", claims.UserId)
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString(jwtKey)

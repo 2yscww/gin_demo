@@ -1,60 +1,79 @@
 <template>
-    <!-- <nav>
+  <!-- <nav>
       <ul>
         <li><router-link to="/">首页</router-link></li>
         <li><router-link to="/register">注册</router-link></li>
         <li><router-link to="/login">登录</router-link></li>
       </ul>
     </nav> -->
-    <nav class="navbar navbar-expand-lg navbar-dark ">
-  <a class="navbar-brand" href="#">Navbar</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarNav">
-    <ul class="navbar-nav">
-      <li class="nav-item active">
-        <router-link class="nav-link" to="/">Home <span class="sr-only"></span></router-link>
-      </li>
-      <li class="nav-item">
-        <router-link class="nav-link" to="/login">login</router-link>
-      </li>
-      <li class="nav-item">
-        <router-link class="nav-link" to="/register">register</router-link>
-      </li>
-      <!-- <li class="nav-item">
+  <nav class="navbar navbar-expand-lg navbar-dark ">
+    <router-link to="/">
+      <a class="navbar-brand" href="#">Navbar</a>
+    </router-link>
+    <!-- <a class="navbar-brand" href="#">Navbar</a> -->
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item active">
+          <router-link class="nav-link" to="/">Home <span class="sr-only"></span></router-link>
+        </li>
+        <li class="nav-item">
+          <router-link class="nav-link" to="/login">login</router-link>
+        </li>
+        <li class="nav-item">
+          <router-link class="nav-link" to="/register">register</router-link>
+        </li>
+        <!-- <li class="nav-item">
         <a class="nav-link disabled" href="#">Disabled</a>
       </li> -->
-    </ul>
-  </div>
-    </nav>
-
-    <div class="test-block">
-
+      </ul>
     </div>
+
+    <div class="navbar-text ml-auto" v-if="localUserInfo">
+      <span>获取</span>
+    </div>
+  </nav>
+
+  <div class="test-block">
+
+  </div>
 
 </template>
 
 
 <script setup>
+// import storageService from '@/utils/storageService';
+// import { computed } from 'vue';
+
+// const localUserInfo = computed(()=>{
+//   const localSaveData = storageService.get(storageService.USER_INFO);
+//   return localSaveData ? JSON.parse(localSaveData) : {}; 
+// });
+
+
 
 </script>
 
 
 <style lang="scss" scoped>
-    .navbar{
-        background-color: #2c3e50 !important; /* 设置导航栏背景色 */
-    }
-    .navbar-brand {
-        
-        padding-left: 10px;
-    }   
+.navbar {
+  background-color: #2c3e50 !important;
+  /* 设置导航栏背景色 */
+}
 
-    .test-block{
-        padding-bottom: 20px;
-    }
+.navbar-brand {
 
-    
+  padding-left: 10px;
+}
+
+.test-block {
+  padding-bottom: 20px;
+}
+
+
 //     nav {
 //   background-color: #2c3e50; /* 设置导航栏背景色 */
 //   padding: 10px 0;

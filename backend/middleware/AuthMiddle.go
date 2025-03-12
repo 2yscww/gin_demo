@@ -8,10 +8,12 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
+
 		// 获取authorization header
 		tokenString := c.GetHeader("Authorization")
 
@@ -58,10 +60,27 @@ func AuthMiddleware() gin.HandlerFunc {
 		log.Printf("AuthMiddleware - 解析出 UserId: %d\n", userID)
 		db := common.GetDB()
 
+		if db == nil {
+			log.Println("数据库连接为空")
+		}
+
 		var user model.User
 
 		// ? 搞清楚这句话做什么的
-		db.First(&user, userID)
+		// db.First(&user, userID)
+
+		result := db.First(&user, userID)
+		if result.Error != nil {
+			if result.Error == gorm.ErrRecordNotFound {
+				// 没有找到对应用户
+				c.JSON(http.StatusUnauthorized, gin.H{"code": 401, "msg": "无此用户"})
+			} else {
+				// 其他错误
+				c.JSON(http.StatusInternalServerError, gin.H{"code": 500, "msg": "数据库查询出错"})
+			}
+			c.Abort()
+			return
+		}
 
 		// 验证用户
 		if userID == 0 {

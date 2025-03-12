@@ -13,8 +13,8 @@
                             <input type="tel" class="form-control" v-model="user.telephone" id="exampleInputTelephone1"
                                 placeholder="输入您的电话号码">
                             <b-form-text class="text-danger" v-if="telephoneNumRed">手机号必须为11位</b-form-text>
-                            <b-form-text class="text-danger" v-if="telephoneHasExistRed">{{ telephoneErrorMsg
-                                }}</b-form-text>
+                            <b-form-text class="text-danger" v-if="telephoneHasExistRed">{{
+                                telephoneErrorMsg}}</b-form-text>
                         </div>
                         <div class="mb-3">
                             <label for="exampleInputPassword1" class="form-label">密码</label>
@@ -110,10 +110,16 @@ const register = async () => {
             // 保存token
             // 假设后端返回了 token，保存它到 localStorage 或 vuex
             // localStorage.setItem("token", response.data.data.token);
-            storageService.set(storageService.USER_TOKEN, JSON.stringify(response.data.data.token));
+            // storageService.set(storageService.USER_TOKEN, JSON.stringify(response.data.data.token));
+            storageService.set(storageService.USER_TOKEN, response.data.data.token);
 
-            const tokentest = storageService.get(storageService.USER_TOKEN);
-            console.log("Token  storage:", tokentest);
+            // 获取到最新的token
+            const newToken = storageService.get(storageService.USER_TOKEN);
+
+
+            console.log("注册保存的token------------");
+            console.log("Token  storage:", newToken);
+            console.log("注册保存的token------------");
 
             // 保存用户信息
 
@@ -121,14 +127,16 @@ const register = async () => {
 
             if (infoResponse.data && infoResponse.data.code === 200) {
                 // * 将用户名保存
-                storageService.set(storageService.USER_INFO, response.data.data.user.username);
-                console.log(infoResponse.data)
+                storageService.set(storageService.USER_INFO, JSON.stringify(response.data.data.user.username));
+                console.log(infoResponse)
 
             } else {
                 console.log("获取用户信息失败:", infoResponse);
             }
 
+            // TODO 前端发送给后端的token是旧的
 
+            
 
 
             console.log("注册成功:", response.data);

@@ -13,6 +13,7 @@ const USER_INFO = `${USER_PREFIX}info`;
 // 储存
 
 const set = (key, data) => {
+    console.log(`存储的数据: ${data}`); // 检查存储的数据
     localStorage.setItem(key, data)
 }
 

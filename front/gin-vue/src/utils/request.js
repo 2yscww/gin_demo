@@ -26,6 +26,12 @@ userService.interceptors.request.use(
         return config;
     },
     (error) => {
+
+        if (error.response && error.response.status === 401) {
+            console.log("Token 过期，请重新登录");
+            // 这里可以引导用户重新登录
+        }
+        
         return Promise.reject(error);
     }
 );

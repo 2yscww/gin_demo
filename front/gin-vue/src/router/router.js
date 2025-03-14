@@ -7,20 +7,20 @@ import HelloWorld from '@/components/HelloWorld.vue'
 
 // 创建路由配置
 const routes = [
-    { path: '/', component: HelloWorld },
-    { path: '/register', component: () => import('@/pages/RegisterPage.vue') },
-    { path: '/login', component: () => import('@/pages/LoginPage.vue') }
-    // { path: '/register', component: Register },
-    // { path: '/login', component: Login }
-    // { path: '/about', component: About }
+  { path: '/', name: 'home', component: HelloWorld },
+  { path: '/register', name: 'register', component: () => import('@/pages/RegisterPage.vue') },
+  { path: '/login', name: 'login', component: () => import('@/pages/LoginPage.vue') }
+  // { path: '/register', component: Register },
+  // { path: '/login', component: Login }
+  // { path: '/about', component: About }
 
 ]
 
 // 创建 Vue Router 实例
 const router = createRouter({
-    history: createWebHistory(), // 使用 HTML5 历史模式
-    routes // 将路由配置传递给 router 实例
-  })
+  history: createWebHistory(), // 使用 HTML5 历史模式
+  routes // 将路由配置传递给 router 实例
+})
 
 
 // 导出 router 实例

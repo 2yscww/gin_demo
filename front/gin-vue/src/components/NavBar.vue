@@ -8,7 +8,7 @@
     </nav> -->
   <nav class="navbar navbar-expand-lg navbar-dark ">
     <router-link to="/">
-      <a class="navbar-brand" href="#">Navbar</a>
+      <a class="navbar-brand" href="#">哈基米</a>
     </router-link>
     <!-- <a class="navbar-brand" href="#">Navbar</a> -->
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
@@ -20,21 +20,30 @@
         <li class="nav-item active">
           <router-link class="nav-link" to="/">Home <span class="sr-only"></span></router-link>
         </li>
-        <li class="nav-item">
-          <router-link class="nav-link" to="/login">login</router-link>
+        <li class="nav-item" v-if="!localUserName">
+          <router-link class="nav-link" to="/login" v-if="routeInfo.name !== 'login'">login</router-link>
         </li>
-        <li class="nav-item">
-          <router-link class="nav-link" to="/register">register</router-link>
+        <li class="nav-item" v-if="!localUserName">
+          <router-link class="nav-link" to="/register" v-if="routeInfo.name !== 'register'">register</router-link>
+
+          <!-- <li class="nav-item">
+        <a class="nav-link disabled" href="#">Disabled</a>  -->
+
         </li>
-        <!-- <li class="nav-item">
-        <a class="nav-link disabled" href="#">Disabled</a>
-      </li> -->
+      </ul>
+
+      <!-- 用户名放在右侧 -->
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item" v-if="localUserName">
+          <span class="nav-link ">{{ localUserName }}</span>
+        </li>
       </ul>
     </div>
 
-    <div class="navbar-text ml-auto" v-if="localUserInfo">
+
+    <!-- <div class="navbar-text ml-auto" v-if="localUserInfo">
       <span>获取</span>
-    </div>
+    </div> -->
   </nav>
 
   <div class="test-block">
@@ -45,15 +54,21 @@
 
 
 <script setup>
-// import storageService from '@/utils/storageService';
-// import { computed } from 'vue';
 
-// const localUserInfo = computed(()=>{
-//   const localSaveData = storageService.get(storageService.USER_INFO);
-//   return localSaveData ? JSON.parse(localSaveData) : {}; 
-// });
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
+import { useUserStore } from '@/stores/module/user';
 
+const routeInfo = useRoute();
 
+const userStore = useUserStore();
+
+// 计算属性：获取本地存储的用户名
+// 应该从pinia处获取名字
+const localUserName = computed(() => {
+  // return storageService.get(storageService.USER_INFO) || '';
+  return userStore.userName
+});
 
 </script>
 
@@ -72,6 +87,8 @@
 .test-block {
   padding-bottom: 20px;
 }
+
+
 
 
 //     nav {

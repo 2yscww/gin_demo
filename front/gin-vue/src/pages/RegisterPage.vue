@@ -41,7 +41,8 @@ import { reactive } from 'vue';
 import { ref } from 'vue';
 import { registerInt, userInfo } from '@/utils/axios';
 import router from '@/router/router';
-import storageService from '@/utils/storageService';
+// import storageService from '@/utils/storageService';
+import { useUserStore } from '@/stores/module/user';
 
 const telephoneNumRed = ref(false);
 
@@ -87,6 +88,9 @@ const telephoneHasExistFunc = (mesg) => {
     }
 }
 
+// 使用pinia接管
+const userStore = useUserStore();
+
 const register = async () => {
     console.log("点击注册按钮，开始执行注册逻辑");
     // 先执行检查
@@ -108,14 +112,25 @@ const register = async () => {
         if (response.data && response.data.code === 200) {
 
             // 保存token
-            // 假设后端返回了 token，保存它到 localStorage 或 vuex
+            // 假设后端返回了 token，保存它到 localStorage 或 pinia
             // localStorage.setItem("token", response.data.data.token);
             // storageService.set(storageService.USER_TOKEN, JSON.stringify(response.data.data.token));
-            storageService.set(storageService.USER_TOKEN, response.data.data.token);
+
+            
+            // 调用 storageService 来保存信息
+            // storageService.set(storageService.USER_TOKEN, response.data.data.token);
+
+            // 由pinia接管
+            userStore.setToken(response.data.data.token)
+
 
             // 获取到最新的token
-            const newToken = storageService.get(storageService.USER_TOKEN);
+            // const newToken = storageService.get(storageService.USER_TOKEN);
+            const newToken = userStore.token
 
+            // TODO 完善功能后要将log输出的代码都删除 
+
+            //TODO 完善用户信息的校验,比如校验token
 
             console.log("注册保存的token------------");
             console.log("Token  storage:", newToken);
@@ -127,14 +142,22 @@ const register = async () => {
 
             if (infoResponse.data && infoResponse.data.code === 200) {
                 // * 将用户名保存
-                storageService.set(storageService.USER_INFO, JSON.stringify(response.data.data.user.username));
+                console.log(infoResponse.data.data.user.username); // 确认这个值是否正确
+                // storageService.set(storageService.USER_INFO, JSON.stringify(response.data.data.user.username));
+
+                // 调用 storageService 来保存信息
+                // storageService.set(storageService.USER_INFO, infoResponse.data.data.user.username);
+
+                // pinia接管
+                userStore.setUserInfo(infoResponse.data.data.user.username);
+
                 console.log(infoResponse)
 
             } else {
                 console.log("获取用户信息失败:", infoResponse);
             }
 
-            // TODO 前端发送给后端的token是旧的
+            
 
             
 

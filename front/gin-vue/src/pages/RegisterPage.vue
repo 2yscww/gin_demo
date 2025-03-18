@@ -78,8 +78,18 @@ const passwdCheckFunc = () => {
 
 //  代码还原
 
+// const telephoneHasExistFunc = (mesg) => {
+//     if (mesg === "该手机号已注册用户") {
+//         telephoneHasExistRed.value = true
+//         telephoneErrorMsg.value = mesg
+//     } else {
+//         telephoneHasExistRed.value = false
+//         telephoneErrorMsg.value = ""
+//     }
+// }
+
 const telephoneHasExistFunc = (mesg) => {
-    if (mesg === "该手机号已注册用户") {
+    if (mesg != "") {
         telephoneHasExistRed.value = true
         telephoneErrorMsg.value = mesg
     } else {
@@ -88,7 +98,7 @@ const telephoneHasExistFunc = (mesg) => {
     }
 }
 
-// 使用pinia接管
+// 在页面中定义了 userStroe
 const userStore = useUserStore();
 
 const register = async () => {

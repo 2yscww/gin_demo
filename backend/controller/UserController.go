@@ -125,8 +125,15 @@ func Login(c *gin.Context) {
 	db := common.GetDB()
 	// 获取参数
 
-	telephone := c.PostForm("telephone")
-	password := c.PostForm("password")
+	// telephone := c.PostForm("telephone")
+	// password := c.PostForm("password")
+
+	var requestUser = model.User{}
+
+	c.Bind(&requestUser)
+
+	telephone := requestUser.Telephone
+	password := requestUser.Password
 
 	// 数据验证
 

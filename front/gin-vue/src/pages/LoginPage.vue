@@ -1,3 +1,5 @@
+-- Active: 1696057084513@@127.0.0.1@3306@go_test
+-- Active: 1742305285737@@127.0.0.1@49161
 <template>
     <div class="login">
         <b-row>
@@ -9,6 +11,8 @@
                             <input type="tel" class="form-control" v-model="user.telephone" id="exampleInputTelephone1"
                                 placeholder="输入您的电话号码">
                             <b-form-text class="text-danger" v-if="telephoneNumRed">手机号必须为11位</b-form-text>
+                            <b-form-text class="text-danger" v-if="telephoneHasExistRed">{{
+                                telephoneErrorMsg }}</b-form-text>
                         </div>
                         <div class="mb-3">
                             <label for="exampleInputPassword1" class="form-label">密码</label>
@@ -20,7 +24,7 @@
                             <input type="checkbox" class="form-check-input" id="exampleCheck1">
 
                         </div>
-                        <button type="submit" class="btn btn-primary" >登录</button>
+                        <button type="submit" class="btn btn-primary">登录</button>
                     </form>
                 </b-card>
             </b-col>
@@ -33,19 +37,32 @@
 <script setup>
 import { reactive } from 'vue';
 import { ref } from 'vue';
+import { loginIntface, userInfo } from '@/utils/axios';
+import { useUserStore } from '@/stores/module/user';
+import storageService from '@/utils/storageService';
+import router from '@/router/router';
+
 
 const telephoneNumRed = ref(false);
 
-
 const passwdRed = ref(false);
+
+const errorMsgRed = ref(false);
+
+// 存储后端返回的错误信息
+const errorMsg = ref("");
+
+// 定义 userStore pinia
+const userStore = useUserStore(); 
 
 
 const user = reactive({
-    username: "",
     telephone: "",
     password: ""
 });
 
+
+// 检查电话是否符合前端要求
 const telephoneCheckFunc = () => {
     if (user.telephone.length !== 11) {
         telephoneNumRed.value = true;
@@ -54,6 +71,7 @@ const telephoneCheckFunc = () => {
     }
 }
 
+// 检查密码是否符合前端要求
 const passwdCheckFunc = () => {
     if (user.password.length < 8) {
         passwdRed.value = true;
@@ -62,18 +80,107 @@ const passwdCheckFunc = () => {
     }
 }
 
-// TODO 登录逻辑需要完善
 
-const login = () => {
-    // 先执行检查
+// 后端返回的错误信息
+const errorMsgFunc = (mesg) => {
+    if (mesg != "") {
+        errorMsgRed.value = true
+        errorMsg.value = mesg
+    } else {
+        errorMsgRed.value = false
+        errorMsg.value = ""
+    }
+}
+
+
+
+
+const login = async () => {
+    // TODO 登录逻辑需要完善
+    
+    // 先执行前端检查
     telephoneCheckFunc();
     passwdCheckFunc();
 
-    //登录失败的逻辑
-    if (telephoneNumRed.value == true || passwdRed.value == true){
-        console.log("不通过!");
+    //电话号码或密码前端要求不符合
+    if (telephoneNumRed.value == true || passwdRed.value == true) {
+        console.log("电话或者密码不符合要求");
         return;
     }
+
+    // 验证数据
+
+    try {
+        const response = await loginIntface(user);
+
+        if (response.data && response.data.code === 200) {
+
+            // 由pinia接管
+            userStore.setToken(response.data.data.token)
+
+            console.log(storageService.get(storageService.USER_TOKEN)); // 确认这个值是否正确
+
+            const infoResponse = await userInfo();
+
+            if (infoResponse.data && infoResponse.data.code === 200) {
+                // 将用户名保存
+                
+                // pinia接管
+                userStore.setUserInfo(infoResponse.data.data.user.username);
+
+                console.log(storageService.get(storageService.USER_INFO)); // 确认这个值是否正确
+
+                console.log(infoResponse)
+
+            } else {
+                console.log("获取用户信息失败:", infoResponse);
+            }
+
+            // 跳转主页
+            router.push("/")
+
+
+        } else {
+            console.log("登录失败:",response);
+        }
+
+    } catch (error) {
+        if (error.response) {
+            const { msg } = error.response.data;
+
+
+            errorMsgFunc(msg);
+
+            // if (msg === "该手机号已注册用户") {
+            //     alert("该手机号已注册用户")
+            // }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //登录失败的逻辑
+
 
     // if (user.telephone.length !== 11) {
     //     telephoneNumRed.value = true;
@@ -84,7 +191,7 @@ const login = () => {
 
     // if (user.password.length < 8) {
     //     passwdRed.value = true;
-            // return;
+    // return;
     // } else {
     //     passwdRed.value = false;
     // }
@@ -94,5 +201,4 @@ const login = () => {
 </script>
 
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

@@ -38,7 +38,7 @@ func main() {
 	// 1.创建路由
 	r := gin.Default()
 
-	r = router.CollectRtoutes(r)
+	r = router.CollectRoutes(r)
 
 	// 读取端口配置
 	port := viper.GetString("server.port")

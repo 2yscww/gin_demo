@@ -3,6 +3,7 @@ package common
 import (
 	"fmt"
 	"log"
+	"net/url"
 
 	"gin_demo/model"
 
@@ -22,8 +23,8 @@ func InitDB() {
 	host := viper.GetString("datasource.host")
 	port := viper.GetString("datasource.port")
 	charset := viper.GetString("datasource.charset")
-
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=True&loc=Local", username, passwd, host, port, databaseName, charset)
+	loc := viper.GetString("datasource.loc")
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=True&loc=%s", username, passwd, host, port, databaseName, charset, url.QueryEscape(loc))
 	var err error
 
 	// 初始化数据库连接

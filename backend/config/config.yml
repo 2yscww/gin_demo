@@ -8,3 +8,4 @@ datasource:
   username: root
   password: w86#qNwV
   charset: utf8
+  loc: Asia/Shanghai

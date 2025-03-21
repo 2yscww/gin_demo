@@ -23,10 +23,19 @@ const get = (key) => {
     return localStorage.getItem(key)
 }
 
+const remove = (key) => {
+    try {
+        localStorage.removeItem(key);
+    } catch (e) {
+        console.error(`删除存储数据失败: ${key}`, e);
+    }
+}
+
 
 export default {
     set, 
     get,
+    remove,
     USER_TOKEN,
     USER_INFO
 };

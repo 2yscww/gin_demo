@@ -8,7 +8,7 @@
     </nav> -->
   <nav class="navbar navbar-expand-lg navbar-dark ">
     <router-link to="/">
-      <a class="navbar-brand" href="#">哈基米</a>
+      <a class="navbar-brand" href="#">叮咚鸡</a>
     </router-link>
     <!-- <a class="navbar-brand" href="#">Navbar</a> -->
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
@@ -30,12 +30,20 @@
         <a class="nav-link disabled" href="#">Disabled</a>  -->
 
         </li>
+        <li class="nav-item" v-if="localUserName">
+          <router-link class="nav-link" to="/user/profile">
+            your profile
+          </router-link>
+        </li>
       </ul>
 
       <!-- 用户名放在右侧 -->
       <ul class="navbar-nav ms-auto">
         <li class="nav-item" v-if="localUserName">
           <span class="nav-link ">{{ localUserName }}</span>
+        </li>
+        <li class="nav-ietm" v-if="localUserName" @click="logout">
+          <span class="nav-link">登出</span>
         </li>
       </ul>
     </div>
@@ -70,6 +78,10 @@ const localUserName = computed(() => {
   return userStore.userName
 });
 
+const logout = ()=>{
+  userStore.clearUserInfo();
+}
+
 </script>
 
 
@@ -87,6 +99,7 @@ const localUserName = computed(() => {
 .test-block {
   padding-bottom: 20px;
 }
+
 
 
 

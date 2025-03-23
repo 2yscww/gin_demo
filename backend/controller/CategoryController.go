@@ -4,6 +4,7 @@ import (
 	"gin_demo/common"
 	"gin_demo/model"
 	"gin_demo/response"
+	"gin_demo/vo"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -35,34 +36,42 @@ func NewCategoryController() ICategoryController {
 // ? 符合 ICategoryController 接口的定义，
 // ? 所以它被视为实现了该接口（Go 是隐式接口实现）
 
+// ? 创建
 func (c CategoryController) Create(ctx *gin.Context) {
-	var requestCategory model.Category
-	ctx.Bind(&requestCategory)
+	// var requestCategory model.Category
+	// ctx.Bind(&requestCategory)
 
-	if requestCategory.Name == "" {
-		response.Fail(ctx, nil, "数据验证错误,分类名称必填")
-	}
+	// if requestCategory.Name == "" {
+	// 	response.Fail(ctx, nil, "数据验证错误,分类名称必填")
+	// }
 
-	if len(requestCategory.Name) > 50 {
+	// if len(requestCategory.Name) > 50 {
+	// 	response.Fail(ctx, nil, "参数不合法")
+	// }
+
+	// c.DB.Create(&requestCategory)
+
+	var requestCategory vo.CreateCategoryRequest
+
+	if err := ctx.ShouldBind(&requestCategory); err != nil {
 		response.Fail(ctx, nil, "参数不合法")
+		return
 	}
 
-	c.DB.Create(&requestCategory)
+	category := model.Category{Name: requestCategory.Name}
+
+	c.DB.Create(&category)
 
 	response.Success(ctx, gin.H{"Category": requestCategory}, "")
 }
 
+// ? 更新
 func (c CategoryController) Update(ctx *gin.Context) {
-	// 绑定body中的参数
-	var requestCategory model.Category
 
-	if err := ctx.Bind(&requestCategory); err != nil {
-		response.Fail(ctx, nil, "数据绑定错误，"+err.Error())
-		return
-	}
+	var requestCategory vo.CreateCategoryRequest
 
-	if requestCategory.Name == "" {
-		response.Fail(ctx, nil, "数据验证错误,分类名称必填")
+	if err := ctx.ShouldBind(&requestCategory); err != nil {
+		response.Fail(ctx, nil, "参数不合法")
 		return
 	}
 
@@ -73,8 +82,8 @@ func (c CategoryController) Update(ctx *gin.Context) {
 		return
 	}
 
-	var updatecategory model.Category
-	result := c.DB.First(&updatecategory, categoryID)
+	var updateCategory model.Category
+	result := c.DB.First(&updateCategory, categoryID)
 
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
@@ -87,13 +96,15 @@ func (c CategoryController) Update(ctx *gin.Context) {
 		return
 	}
 
-	// map struct name value
-	c.DB.Model(&updatecategory).Update("name", requestCategory.Name)
+	c.DB.Model(&updateCategory).Update("name", requestCategory.Name)
 
-	response.Success(ctx, gin.H{"category": updatecategory}, "修改成功")
+	response.Success(ctx, gin.H{"category": updateCategory}, "修改成功")
 
 }
 
+// TODO 继续重构分类请求控制
+
+// ? 查看
 func (c CategoryController) Show(ctx *gin.Context) {
 
 	// 获取path中的参数
@@ -121,6 +132,7 @@ func (c CategoryController) Show(ctx *gin.Context) {
 
 }
 
+// ? 删除
 func (c CategoryController) Delete(ctx *gin.Context) {
 	// 获取path中的参数
 	categoryID, err := strconv.Atoi(ctx.Params.ByName("id"))

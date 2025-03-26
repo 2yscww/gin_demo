@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"gin_demo/common"
 	"gin_demo/model"
+	"gin_demo/repository"
 	"gin_demo/response"
 	"gin_demo/vo"
 	"strconv"
@@ -18,14 +18,15 @@ type ICategoryController interface {
 
 // CategoryController 是 ICategoryController 的实现
 type CategoryController struct {
-	DB *gorm.DB
+	Repository repository.CategoryRepository
 }
 
 func NewCategoryController() ICategoryController {
-	db := common.GetDB()
-	db.AutoMigrate(model.Category{})
+	repository := repository.NewCategoryRepository()
 
-	return CategoryController{DB: db}
+	repository.DB.AutoMigrate(model.Category{})
+
+	return CategoryController{Repository: repository}
 }
 
 // CategoryController 是 ICategoryController 的实现
@@ -58,11 +59,15 @@ func (c CategoryController) Create(ctx *gin.Context) {
 		return
 	}
 
-	category := model.Category{Name: requestCategory.Name}
+	category, err := c.Repository.Create(requestCategory.Name)
+	if err != nil {
+		panic(err)
+		// * 暂时注释掉
+		// response.Fail(ctx, nil, "创建失败")
+		return
+	}
 
-	c.DB.Create(&category)
-
-	response.Success(ctx, gin.H{"Category": requestCategory}, "")
+	response.Success(ctx, gin.H{"Category": category}, "")
 }
 
 // ? 更新
@@ -82,23 +87,26 @@ func (c CategoryController) Update(ctx *gin.Context) {
 		return
 	}
 
-	var updateCategory model.Category
-	result := c.DB.First(&updateCategory, categoryID)
+	updateCategory, err := c.Repository.SelectByID(categoryID)
 
-	if result.Error != nil {
-		if result.Error == gorm.ErrRecordNotFound {
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
 			// 如果没有找到记录
 			response.Fail(ctx, nil, "分类不存在")
 			return
 		}
 		// 其他错误
-		response.Fail(ctx, nil, "数据库错误："+result.Error.Error())
+		response.Fail(ctx, nil, "数据库错误："+err.Error())
 		return
 	}
 
-	c.DB.Model(&updateCategory).Update("name", requestCategory.Name)
+	category, err := c.Repository.Update(*updateCategory, requestCategory.Name)
 
-	response.Success(ctx, gin.H{"category": updateCategory}, "修改成功")
+	if err != nil {
+		panic(err)
+	}
+
+	response.Success(ctx, gin.H{"category": category}, "修改成功")
 
 }
 
@@ -114,17 +122,30 @@ func (c CategoryController) Show(ctx *gin.Context) {
 		return
 	}
 
-	var category model.Category
-	result := c.DB.First(&category, categoryID)
+	// var category model.Category
+	// result := c.DB.First(&category, categoryID)
 
-	if result.Error != nil {
-		if result.Error == gorm.ErrRecordNotFound {
+	// if result.Error != nil {
+	// 	if result.Error == gorm.ErrRecordNotFound {
+	// 		// 如果没有找到记录
+	// 		response.Fail(ctx, nil, "分类不存在")
+	// 		return
+	// 	}
+	// 	// 其他错误
+	// 	response.Fail(ctx, nil, "数据库错误："+result.Error.Error())
+	// 	return
+	// }
+
+	category, err := c.Repository.SelectByID(categoryID)
+
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
 			// 如果没有找到记录
 			response.Fail(ctx, nil, "分类不存在")
 			return
 		}
 		// 其他错误
-		response.Fail(ctx, nil, "数据库错误："+result.Error.Error())
+		response.Fail(ctx, nil, "数据库错误："+err.Error())
 		return
 	}
 
@@ -144,16 +165,10 @@ func (c CategoryController) Delete(ctx *gin.Context) {
 	// var category model.Category
 	// result := c.DB.First(&category, categoryID)
 
-	result := c.DB.Delete(model.Category{}, categoryID)
+	result := c.Repository.DeleteByID(categoryID)
 
-	if result.Error != nil {
-		if result.Error == gorm.ErrRecordNotFound {
-			// 如果没有找到记录
-			response.Fail(ctx, nil, "删除失败,请重试")
-			return
-		}
-		// 其他错误
-		response.Fail(ctx, nil, "数据库错误："+result.Error.Error())
+	if result != nil {
+		response.Fail(ctx, nil, "删除失败")
 		return
 	}
 

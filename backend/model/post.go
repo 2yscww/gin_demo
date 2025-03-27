@@ -17,7 +17,7 @@ type Post struct {
 	UpdatedAt  Time   `json:"updated_at" gorm:"type:timestamp"`
 }
 
-func (post *Post) BeforeCreate(tx *gorm.DB) (err error) {
+func (post *Post) BeforeCreate(ctx *gorm.DB) (err error) {
 	if post.ID == uuid.Nil {
 		post.ID = uuid.New()
 	}

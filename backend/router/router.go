@@ -30,6 +30,7 @@ func CollectRoutes(r *gin.Engine) *gin.Engine {
 	postRoutes.PUT("/:id", postController.Update)
 	postRoutes.GET("/:id", postController.Show)
 	postRoutes.DELETE("/:id", postController.Delete)
+	postRoutes.POST("page/list", postController.PageList)
 
 	return r
 }
